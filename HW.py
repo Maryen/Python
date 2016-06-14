@@ -7,10 +7,10 @@ class char:
     def say_age(self, age):
         print('I am {}'.format(int(age)))
     def __int__(self):
-       if self < 18:
-           return ' < 18'
+       if int(self) < 18:
+           print(' < 18')
        else:
-           return ' > 18'
+           print(' > 18')
               
 
 char_1 = char('alex','15')
@@ -34,12 +34,9 @@ keys = {'name' :(current_char.say_name, current_char.name), 'age' : (current_cha
 for i in keys:
     if i in dialog:
         keys[i][0](keys[i][1])
-        
+        if i == 'age':
+            print(keys[i][1])
 """
 if i == 'age':
 print(int(keys[i][1]) )   
 """        
-        
-    
-
-    
