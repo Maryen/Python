@@ -11,25 +11,21 @@ def get_html(url):
 
 def parse(html):
     soup = BeautifulSoup(html, 'html.parser')
-    table = soup.find('ul', 'items-list util-clearfix')
+    
   
     link_list = []
     title_list = []
     price_list = []
-    
-    for i in table.find_all('div', 'detail'):
-        detail = i.find_all('a')
-        for i in detail:
-            link_list.append(str('http:'+i.attrs['href']))
-            title_list.append(str(i.attrs['title']))
-        
-        
-   
-    discr_in_teg = soup.select('div.detail a')
-    for i in discr_in_teg:
-        link_list.append(str('http:'+i.attrs['href']))
-        title_list.append(str(i.attrs['title']))
-        
+
+    table = soup.find_all('ul', class_= 'items-list util-clearfix')
+    for i in table:
+        details = i.select('div.detail')
+        for i in details:
+            detail = i.select('a')
+            for i in detail:
+                link_list.append(str('http:'+i.attrs['href']))
+                title_list.append(str(i.attrs['title']))
+
     """
     нумерованый список названий товаров
     
@@ -48,15 +44,16 @@ def parse(html):
     #print(len(price_list))
 
     #Вывод всех данных по товарам:
-    #for i in range(len(price_list)):
-        #print(str(i) + ' {} \n {} \n {} \n'.format(link_list[i],title_list[i],price_list[i]))
     
-    #print('len link_list', len(link_list))
-    #print('len title_list', len(title_list))
-    #print('len price_list', len(price_list))
+    for i in range(len(price_list)):
+        print(str(i) + ' {} \n {} \n {} \n'.format(link_list[i],title_list[i],price_list[i]))
+    
+    print('len link_list', len(link_list))
+    print('len title_list', len(title_list))
+    print('len price_list', len(price_list))
 
     #return link_list,title_list,price_list
-
+    
 #def save(*args,**kwargs):
     book = xlwt.Workbook('utf8')
     font = xlwt.easyxf('font: height 240,name Arial,colour_index black, bold off,\
