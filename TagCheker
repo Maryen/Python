@@ -1,0 +1,114 @@
+from os import listdir, chdir
+from lxml import etree
+
+
+def get_xml_list_from_file_collection():
+    temp_xml_list = []
+    file_in_dir = listdir(chdir('D:\\Downloads\\lang_files'))
+    for file in file_in_dir:
+        if file.endswith('.xml'):
+            temp_xml_list.append(file)
+    return(temp_xml_list)
+            
+
+
+def teg_len(teg_for_search): 
+    xml_list = get_xml_list_from_file_collection() #get xml list
+    tegs_for_search = [str(teg_for_search)] #get teg for search
+    result = {}
+    for xml in xml_list: 
+        result.fromkeys(['tegs_name', 'len'],str(xml))
+        tree = etree.parse('D:\\Downloads\\lang_files\\{0}'.format(str(xml))) #path to dir with lang files
+        for teg in tegs_for_search:
+            current_xml = tree.xpath('/lang/common/{0}'.format(teg))
+            for line in current_xml:
+                current_teg_len = len(line.text)
+                result.setdefault('lang_file:{}        teg name:{}      tag len:{}'.format(xml,teg,line.text),current_teg_len)
+    sorted_result = sorted(result.items(), key=lambda item: item[1]) #sorting by lan
+    for i in sorted_result:
+        print(i)
+        print('\n')
+
+
+
+
+def teg_checker(teg_list):
+    xml_list = get_xml_list_from_file_collection() #get xml list
+    temp_result_list = []
+    result = {}
+    for item_list in teg_list:
+        teg_for_search = [str(item_list)] #get teg for search
+        for xml in xml_list:
+            tree = etree.parse('D:\\Downloads\\lang_files\\{0}'.format(str(xml))) #path to dir with lang files
+            for teg in teg_for_search:
+                current_xml = tree.xpath('/lang/common/{0}'.format(teg))
+                if current_xml == []:
+                    print('Teg "{}" is not in lang_file: {}'.format(teg,xml))
+                    #result.update(
+
+                    #Если в языковике не найден тег, получаем пустой список.
+                    #Нужно сделать словарь со списком {[название файлов]:тег,[название файлов2]:тег2}
+                    
+                    #lang
+                    
+                #result = result.fromkeys([a], xml)
+                    
+                    
+                    
+                    
+
+                    #a = temp_result_list.append(teg)
+                    #result = result.fromkeys([a], xml)
+                    #print(result)                
+
+                    #print(xml)
+                    #print(teg)
+                    #result = result.fromkeys(, xml)
+
+    
+                    
+                    #print('Teg "{}" is not in lang_file: {}'.format(teg,xml))
+                        #result.dict.update([other])
+                        #result = result.fromkeys(, )               
+    
+        
+        
+
+def is_tegs_here(teg_list):
+    for teg in teg_list:
+        print('wtf')
+        
+    
+    
+def main():
+    #teg_len('defOops') #get teg_name for search in lang files.
+    #teg_len умеет только 1 параметр
+    #is_tegs_here(['defOops','MoreThan2MonthsAgo'])
+    #is_tegs_here умеет работать только со списком
+    teg_checker(['defOops','MyResumeFormCreateNew'])
+    
+    
+""" Учим принимать teg_len теги в разном виде:
+1) в виде строки типа <JobTagApply>Easily apply</JobTagApply>
+2) в виде строки типа <JobTagApply>
+3) в виде строки типа JobTagApply
+4) в виде списка п.1
+5) в виде списка п.2
+6) в виде списка п.3
+
+S.replace(шаблон, замена)	Замена шаблона
+
+def parse_tegs_type(tegs):
+    #параметр строка тег типа <JobTagApply>Easily apply</JobTagApply>
+    if tegs is list and param[0].startswith('<'):
+        for teg in parse_tegs_type:
+            teg_list = tree.xpath('/lang/common/{0}'.format(teg))
+        
+        
+"""
+
+
+
+if __name__ == '__main__':
+    main()
+    
