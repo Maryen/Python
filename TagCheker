@@ -8,8 +8,33 @@ def get_xml_list_from_file_collection():
     for file in file_in_dir:
         if file.endswith('.xml'):
             temp_xml_list.append(file)
+    temp_xml_list.remove('settings.xml') #remove our settings.xml file from general lang-files
     return(temp_xml_list)
-            
+
+
+def get_teg_list_from_xml():
+    settings = []
+    settings_location = listdir(chdir('D:\\Downloads\\lang_files'))
+    for file1 in settings_location:
+        if file1.endswith('settings.xml'):
+            tree = etree.ElementTree(file=file1)
+            root = tree.getroot()
+            for child_of_root in root.iter():
+                settings.append(child_of_root.tag)
+    settings.remove('tegs_for_search') #removing teg-wrapper where placed tegs we search
+    settings = check_for_double(settings) #now we nevermind if tegs in settings.xml not unique
+    return(settings)
+
+def check_for_double(settings):
+    seen = set()
+    result = []
+    for x in settings:
+        if x in seen:
+            continue
+        seen.add(x)
+        result.append(x)
+    return(result)
+
 
 
 def teg_len(teg_for_search): 
@@ -17,7 +42,7 @@ def teg_len(teg_for_search):
     tegs_for_search = [str(teg_for_search)] #get teg for search
     result = {}
     for xml in xml_list: 
-        result.fromkeys(['tegs_name', 'len'],str(xml))
+        #result.fromkeys(['tegs_name', 'len'],str(xml))
         tree = etree.parse('D:\\Downloads\\lang_files\\{0}'.format(str(xml))) #path to dir with lang files
         for teg in tegs_for_search:
             current_xml = tree.xpath('/lang/common/{0}'.format(teg))
@@ -31,10 +56,9 @@ def teg_len(teg_for_search):
 
 
 
-
 def teg_checker(teg_list):
     xml_list = get_xml_list_from_file_collection() #get xml list
-    temp_result_list = []
+    temp_xml_list = []
     result = {}
     for item_list in teg_list:
         teg_for_search = [str(item_list)] #get teg for search
@@ -43,72 +67,55 @@ def teg_checker(teg_list):
             for teg in teg_for_search:
                 current_xml = tree.xpath('/lang/common/{0}'.format(teg))
                 if current_xml == []:
-                    print('Teg "{}" is not in lang_file: {}'.format(teg,xml))
-                    #result.update(
-
-                    #Если в языковике не найден тег, получаем пустой список.
-                    #Нужно сделать словарь со списком {[название файлов]:тег,[название файлов2]:тег2}
-                    
-                    #lang
-                    
-                #result = result.fromkeys([a], xml)
-                    
-                    
-                    
-                    
-
-                    #a = temp_result_list.append(teg)
-                    #result = result.fromkeys([a], xml)
-                    #print(result)                
-
-                    #print(xml)
-                    #print(teg)
-                    #result = result.fromkeys(, xml)
-
-    
-                    
                     #print('Teg "{}" is not in lang_file: {}'.format(teg,xml))
-                        #result.dict.update([other])
-                        #result = result.fromkeys(, )               
-    
+                    result.setdefault(teg, []).append(xml)
+    return(result,teg_list)
+
+
+def double_teg_entrance(is_double):
+    result = list(set(get_xml_list_from_file_collection()) - set(is_double))
+    if result == []:
+        return(1)
+    else: return(0)
+
+
+def print_results(check_result, tegs_not_find):
+    tegs_that_fine = []
+    for teg in tegs_not_find:
+        n = 0 
+        if teg in check_result:
+            if len(check_result[teg]) == len(get_xml_list_from_file_collection()):
+                    print('Element name: {} not find in any lang-files'.format(teg))
+            else:
+                print('Element name: \n{}\n not in:'.format(teg))
+                #print(len(check_result[teg]))
+                for lang_filename in check_result[teg]:
+                #print('double is:', double_teg_entrance(check_result[teg]))
+                    count = n + 1
+                    print(count,lang_filename)
+                    n = n+1
+                print('\n')
+        else: tegs_that_fine.append(teg)
+    print('\n All are fine with tegs:')
+    for teg in tegs_that_fine:
+        print(teg)
         
         
 
-def is_tegs_here(teg_list):
-    for teg in teg_list:
-        print('wtf')
-        
-    
-    
+    #print(check_result)
+    #print(tegs_not_find)
+
+
+
 def main():
-    #teg_len('defOops') #get teg_name for search in lang files.
-    #teg_len умеет только 1 параметр
-    #is_tegs_here(['defOops','MoreThan2MonthsAgo'])
-    #is_tegs_here умеет работать только со списком
-    teg_checker(['defOops','MyResumeFormCreateNew'])
+    try:
+        check_result, tegs_not_find = (teg_checker(get_teg_list_from_xml()))
+        print_results(check_result,tegs_not_find)
+    except etree.XMLSyntaxError as err:
+        print("XML syntax error. Error message:\n{0}".format(err))
+        print('')
+
     
-    
-""" Учим принимать teg_len теги в разном виде:
-1) в виде строки типа <JobTagApply>Easily apply</JobTagApply>
-2) в виде строки типа <JobTagApply>
-3) в виде строки типа JobTagApply
-4) в виде списка п.1
-5) в виде списка п.2
-6) в виде списка п.3
-
-S.replace(шаблон, замена)	Замена шаблона
-
-def parse_tegs_type(tegs):
-    #параметр строка тег типа <JobTagApply>Easily apply</JobTagApply>
-    if tegs is list and param[0].startswith('<'):
-        for teg in parse_tegs_type:
-            teg_list = tree.xpath('/lang/common/{0}'.format(teg))
-        
-        
-"""
-
-
 
 if __name__ == '__main__':
     main()
-    
